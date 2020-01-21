@@ -4,6 +4,11 @@ import (
 	"fmt"
 )
 
+// map 縦横
+const MAP_height = 5
+const MAP_width  = 5 
+
+
 // player 構造体
 type Player struct{
 	x, y int 
@@ -34,28 +39,60 @@ func gameSelect() int {
 
 // RPGモード
 func rpgMode() int{
-	var name string
+	var name , move string
 	var person = Player{x: 1, y: 1}
+	var allMap int
+
+	allMap = MAP_height * MAP_width 
 
 	// フィールドマップ
-	areaMap := [9] int{0, 0, 0, 
-					   0, 0, 0, 
-					   0, 0, 0}
+	areaMap := [MAP_height*MAP_width]int{} 
+	for i := 0 ; i < allMap ; i++{
+		areaMap[i] = 0
+	}
+
 	
 	fmt.Println("you are welcome to gread iland")
 	name = recodeName()
 	fmt.Println(name)
-	areaMap[person.x * 3 + person.y] = 1
-	for i := 0 ; i < 3 ; i++ {
-		for j := 0 ; j < 3 ; j++ {
-			if areaMap[j * 3 + i] == 0 {
-				fmt.Print("#")
-			} else if areaMap[j * 3 + i] == 1{
-				fmt.Print("P")
+
+	// マップ
+	for{
+		areaMap[person.x * MAP_width + person.y] = 1
+		for i := 0 ; i < MAP_width ; i++ {
+			for j := 0 ; j < MAP_height ; j++ {
+				if areaMap[j * MAP_height + i] == 0 {
+					fmt.Print("#")
+				} else if areaMap[j * MAP_height + i] == 1{
+					fmt.Print("P")
+				}
 			}
+			fmt.Println()
 		}
-		fmt.Println()
+		fmt.Println(person)
+		fmt.Scan(&move)
+		// 移動
+		if(move == "w"){
+			areaMap[person.x * MAP_width + person.y] = 0
+			person.y -= 1
+		}else if(move == "s"){
+			areaMap[person.x * MAP_width + person.y] = 0
+			person.y += 1
+		}else if(move == "a"){
+			areaMap[person.x * MAP_width + person.y] = 0
+			person.x -= 1
+		}else if(move == "d"){
+			areaMap[person.x * MAP_width + person.y] = 0
+			person.x += 1
+		}else{
+			person.x += 0
+			person.y += 0
+		}
+		// over flow
+		
 	}
+	fmt.Println(person)
+	
 	return 1
 }
 
