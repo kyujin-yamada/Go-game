@@ -13,6 +13,10 @@ const MAP_width  = 5
 type Player struct{
 	x, y int 
 }
+// enemy 構造体
+type Enemy struct{
+	x, y int 
+}
 
 // 終了関数
 func finish() int{
@@ -37,18 +41,48 @@ func gameSelect() int {
 	}
 }
 
+// Player move
+func pmove(move string, person Player) Player{
+	if move == "w"{
+		person.y -= 1
+		if person.y < 0 {
+			person.y = 0
+		}
+	}else if move == "s"{
+		person.y += 1
+		if person.y > MAP_height - 1 {
+			person.y = MAP_height - 1
+		}
+	}else if move == "a" {
+		person.x -= 1
+		if person.x < 0 {
+			person.x = 0
+		}
+	}else if move == "d" {
+		person.x += 1
+		if person.x > MAP_width - 1{
+			person.x = MAP_width - 1
+		}
+	}else{
+		person.x += 0
+		person.y += 0
+	}
+	return person
+}
+
 // RPGモード
 func rpgMode() int{
 	var name , move string
-	var person = Player{x: 1, y: 1}
-	var allMap int
+	var person = Player{x: 0, y: 0}
+	var enemy1 = Enemy{x:MAP_width-1, y: MAP_height-1}
 
-	allMap = MAP_height * MAP_width 
 
 	// フィールドマップ
-	areaMap := [MAP_height*MAP_width]int{} 
-	for i := 0 ; i < allMap ; i++{
-		areaMap[i] = 0
+	areaMap := [MAP_width][MAP_height]int{} 
+	for i := 0 ; i < MAP_width ; i++{
+		for j := 0 ; j < MAP_height ; j++{
+			areaMap[i][j] = 0
+		}
 	}
 
 	
@@ -58,38 +92,59 @@ func rpgMode() int{
 
 	// マップ
 	for{
-		areaMap[person.x * MAP_width + person.y] = 1
+		areaMap[person.x][person.y] = 1
+		areaMap[enemy1.x][enemy1.y] = 2
 		for i := 0 ; i < MAP_width ; i++ {
 			for j := 0 ; j < MAP_height ; j++ {
-				if areaMap[j * MAP_height + i] == 0 {
-					fmt.Print("#")
-				} else if areaMap[j * MAP_height + i] == 1{
+				if areaMap[j][i] == 0 {
+					fmt.Print(".")
+				} else if areaMap[j][i] == 1{
 					fmt.Print("P")
+				} else if areaMap[j][i] == 2{
+					fmt.Print("E")
 				}
 			}
 			fmt.Println()
 		}
-		fmt.Println(person)
 		fmt.Scan(&move)
+		areaMap[person.x][person.y] = 0
+		person = pmove(move, person)
+		areaMap[person.x][person.y] = 1
+
 		// 移動
-		if(move == "w"){
-			areaMap[person.x * MAP_width + person.y] = 0
-			person.y -= 1
-		}else if(move == "s"){
-			areaMap[person.x * MAP_width + person.y] = 0
-			person.y += 1
-		}else if(move == "a"){
-			areaMap[person.x * MAP_width + person.y] = 0
-			person.x -= 1
-		}else if(move == "d"){
-			areaMap[person.x * MAP_width + person.y] = 0
-			person.x += 1
-		}else{
-			person.x += 0
-			person.y += 0
-		}
-		// over flow
-		
+		// if move == "w"{
+		// 	areaMap[person.x][person.y] = 0
+		// 	person.y -= 1
+		// 	if person.y < 0 {
+		// 		person.y = 0
+		// 		areaMap[person.x][person.y] = 1
+		// 	}
+		// }else if move == "s"{
+		// 	areaMap[person.x][person.y] = 0
+		// 	person.y += 1
+		// 	if person.y > MAP_height - 1 {
+		// 		person.y = MAP_height - 1
+		// 		areaMap[person.x][person.y] = 1
+		// 	}
+		// }else if move == "a" {
+		// 	areaMap[person.x][person.y] = 0
+		// 	person.x -= 1
+		// 	if person.x < 0 {
+		// 		person.x = 0
+		// 		areaMap[person.x][person.y] = 1
+		// 	}
+		// }else if move == "d" {
+		// 	areaMap[person.x][person.y] = 0
+		// 	person.x += 1
+		// 	if person.x > MAP_width - 1{
+		// 		person.x = MAP_width - 1
+		// 		areaMap[person.x][person.y] = 1
+		// 	}
+		// }else{
+		// 	person.x += 0
+		// 	person.y += 0
+		// }
+
 	}
 	fmt.Println(person)
 	
